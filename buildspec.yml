@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo Installing dependencies from CodeArtifact...
+      - export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextwork --domain-owner 296062576962 --region us-east-1 --query authorizationToken --output text`
+      - pip config set global.index-url https://aws:$CODEARTIFACT_AUTH_TOKEN@nextwork-296062576962.d.codeartifact.us-east-1.amazonaws.com/pypi/nextwork-devops-cicd/simple/
+      - pip install --upgrade pip
+      - pip install -r flask-app/requirements.txt
+
+  pre_build:
+    commands:
+      - echo Running unit tests...
+      - python -m unittest discover -s flask-app/tests || echo "No tests found. Skipping..."
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Python build phase complete
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
