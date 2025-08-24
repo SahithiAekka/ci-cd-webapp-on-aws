@@ -17,24 +17,22 @@ Resources:
       PrivateIpAddress: "172.31.18.100"
       InstanceInitiatedShutdownBehavior: "stop"
       BlockDeviceMappings:
-      - Ebs:
-          SnapshotId: "snap-0f9367e47fa8d3648"
-          VolumeType: "gp3"
-          Iops: 3000
-          VolumeSize: 8
-          Encrypted: false
-          DeleteOnTermination: true
-        DeviceName: "/dev/xvda"
+        - Ebs:
+            SnapshotId: "snap-0f9367e47fa8d3648"
+            VolumeType: "gp3"
+            Iops: 3000
+            VolumeSize: 8
+            Encrypted: false
+            DeleteOnTermination: true
+          DeviceName: "/dev/xvda"   # root volume only
       PrivateDnsNameOptions:
         EnableResourceNameDnsARecord: true
         HostnameType: "ip-name"
         EnableResourceNameDnsAAAARecord: false
-      IamInstanceProfile:
-        Ref: "IAMInstanceProfileCodeartifactnextworkconsumerpolicy"
-      SubnetId:
-        Ref: "EC2Subnet"
+      IamInstanceProfile: !Ref IAMInstanceProfileCodeartifactnextworkconsumerpolicy
+      SubnetId: !Ref EC2Subnet
       SecurityGroupIds:
-      - Ref: "EC2SecurityGroup"
+        - !Ref EC2SecurityGroup
       EbsOptimized: false
       DisableApiTermination: false
       SourceDestCheck: true
@@ -43,25 +41,27 @@ Resources:
       InstanceType: "t2.micro"
       Monitoring: false
       Tags:
-      - Value: "nextwork-devops- sahithi-aekka"
-        Key: "Name"
+        - Key: "Name"
+          Value: "nextwork-devops-sahithi-aekka"
       CreditSpecification:
         CPUCredits: "standard"
+
   CodeArtifactRepositoryRepositorynextworknextworkdevopscicd:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::CodeArtifact::Repository"
     DeletionPolicy: "Delete"
     Properties:
       Upstreams:
-      - Fn::GetAtt:
-        - "CodeArtifactRepositoryRepositorynextworkpypistore"
-        - "Name"
+        - Fn::GetAtt:
+            - "CodeArtifactRepositoryRepositorynextworkpypistore"
+            - "Name"
       RepositoryName: "nextwork-devops-cicd"
       Description: "Repository for NextWork CI/CD artifacts"
       DomainName:
         Fn::GetAtt:
-        - "CodeArtifactDomainDomainnextwork"
-        - "Name"
+          - "CodeArtifactDomainDomainnextwork"
+          - "Name"
+
   IAMManagedPolicyPolicyserviceroleCodeBuildCodeConnectionsSourceCredentialsPolicynextworkdevopscicduseast1296062576962:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::ManagedPolicy"
@@ -74,40 +74,25 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Resource:
-          - "arn:aws:codeconnections:us-east-1:296062576962:connection/c2388504-9441-43b0-b6c2-c01a10ef69ed"
-          - "arn:aws:codeconnections:us-east-1:296062576962:connection/c2388504-9441-43b0-b6c2-c01a10ef69ed"
-          Action:
-          - "codestar-connections:GetConnectionToken"
-          - "codestar-connections:GetConnection"
-          - "codeconnections:GetConnectionToken"
-          - "codeconnections:GetConnection"
-          - "codeconnections:UseConnection"
-          Effect: "Allow"
-      # Removed Roles section - attachment handled by role's ManagedPolicyArns
+          - Resource:
+              - "arn:aws:codeconnections:us-east-1:296062576962:connection/c2388504-9441-43b0-b6c2-c01a10ef69ed"
+              - "arn:aws:codeconnections:us-east-1:296062576962:connection/c2388504-9441-43b0-b6c2-c01a10ef69ed"
+            Action:
+              - "codestar-connections:GetConnectionToken"
+              - "codestar-connections:GetConnection"
+              - "codeconnections:GetConnectionToken"
+              - "codeconnections:GetConnection"
+              - "codeconnections:UseConnection"
+            Effect: "Allow"
       Users: []
-  EC2Volume:
-    UpdateReplacePolicy: "Delete"
-    Type: "AWS::EC2::Volume"
-    DeletionPolicy: "Delete"
-    Properties:
-      MultiAttachEnabled: false
-      SnapshotId: "snap-0f9367e47fa8d3648"
-      VolumeType: "gp3"
-      Encrypted: false
-      Size: 8
-      AutoEnableIO: true
-      AvailabilityZone:
-        Fn::GetAtt: ["EC2Subnet", "AvailabilityZone"]
-      Throughput: 125
-      Iops: 3000
-      Tags: []
+
   CodeArtifactDomainDomainnextwork:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::CodeArtifact::Domain"
     DeletionPolicy: "Delete"
     Properties:
       DomainName: "nextwork"
+
   EC2Subnet:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::EC2::Subnet"
@@ -115,8 +100,7 @@ Resources:
     Properties:
       MapPublicIpOnLaunch: true
       EnableDns64: false
-      VpcId:
-        Ref: "EC2VPC"
+      VpcId: !Ref EC2VPC
       AvailabilityZoneId: "use1-az4"
       PrivateDnsNameOptionsOnLaunch:
         EnableResourceNameDnsARecord: false
@@ -125,6 +109,7 @@ Resources:
       CidrBlock: "172.31.16.0/20"
       Ipv6Native: false
       Tags: []
+
   EC2SecurityGroup:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::EC2::SecurityGroup"
@@ -132,18 +117,18 @@ Resources:
     Properties:
       GroupDescription: "launch-wizard-1 created 2025-08-21T19:37:54.852Z"
       GroupName: "launch-wizard-1"
-      VpcId:
-        Ref: "EC2VPC"
+      VpcId: !Ref EC2VPC
       SecurityGroupIngress:
-      - CidrIp: "216.103.144.19/32"
-        IpProtocol: "tcp"
-        FromPort: 22
-        ToPort: 22
+        - CidrIp: "216.103.144.19/32"
+          IpProtocol: "tcp"
+          FromPort: 22
+          ToPort: 22
       SecurityGroupEgress:
-      - CidrIp: "0.0.0.0/0"
-        IpProtocol: "-1"
-        FromPort: -1
-        ToPort: -1
+        - CidrIp: "0.0.0.0/0"
+          IpProtocol: "-1"
+          FromPort: -1
+          ToPort: -1
+
   IAMRoleCodeartifactnextworkconsumerpolicy:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::Role"
@@ -151,17 +136,18 @@ Resources:
     Properties:
       Path: "/"
       ManagedPolicyArns:
-      - Ref: "IAMManagedPolicyPolicycodeartifactnextworkconsumerpolicy"
+        - Ref: "IAMManagedPolicyPolicycodeartifactnextworkconsumerpolicy"
       MaxSessionDuration: 3600
       RoleName: "codeartifact-nextwork-consumer-policy"
       Description: "IAM role for EC2 instances to access CodeArtifact"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Action: "sts:AssumeRole"
-          Effect: "Allow"
-          Principal:
-            Service: "ec2.amazonaws.com"
+          - Action: "sts:AssumeRole"
+            Effect: "Allow"
+            Principal:
+              Service: "ec2.amazonaws.com"
+
   IAMManagedPolicyPolicyserviceroleCodeBuildCloudWatchLogsPolicynextworkdevopscicduseast1:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::ManagedPolicy"
@@ -174,16 +160,16 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Resource:
-          - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd"
-          - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd:*"
-          Action:
-          - "logs:CreateLogGroup"
-          - "logs:CreateLogStream"
-          - "logs:PutLogEvents"
-          Effect: "Allow"
-      # Removed Roles section and DependsOn - attachment handled by role's ManagedPolicyArns
+          - Resource:
+              - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd"
+              - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd:*"
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Effect: "Allow"
       Users: []
+
   CodeStarConnectionsConnectionConnectionbdac21d871c644c58f3c0be5ea4c63c2:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::CodeStarConnections::Connection"
@@ -192,6 +178,7 @@ Resources:
       ConnectionName: "nextwork-devops-cicd"
       ProviderType: "GitHub"
       Tags: []
+
   CodeDeployApplicationNextworkdevopscicd:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::CodeDeploy::Application"
@@ -199,6 +186,7 @@ Resources:
     Properties:
       ApplicationName: "nextwork-devops-cicd"
       ComputePlatform: "Server"
+
   IAMManagedPolicyPolicyserviceroleCodeBuildBasePolicynextworkdevopscicduseast1:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::ManagedPolicy"
@@ -211,42 +199,42 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Resource:
-          - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd"
-          - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd:*"
-          Action:
-          - "logs:CreateLogGroup"
-          - "logs:CreateLogStream"
-          - "logs:PutLogEvents"
-          Effect: "Allow"
-        - Resource:
-          - "arn:aws:s3:::codepipeline-us-east-1-*"
-          Action:
-          - "s3:PutObject"
-          - "s3:GetObject"
-          - "s3:GetObjectVersion"
-          - "s3:GetBucketAcl"
-          - "s3:GetBucketLocation"
-          Effect: "Allow"
-        - Resource:
-          - "arn:aws:s3:::nextwork-devops-cicd-sahithi-aekka"
-          - "arn:aws:s3:::nextwork-devops-cicd-sahithi-aekka/*"
-          Action:
-          - "s3:PutObject"
-          - "s3:GetBucketAcl"
-          - "s3:GetBucketLocation"
-          Effect: "Allow"
-        - Resource:
-          - "arn:aws:codebuild:us-east-1:296062576962:report-group/nextwork-devops-cicd-*"
-          Action:
-          - "codebuild:CreateReportGroup"
-          - "codebuild:CreateReport"
-          - "codebuild:UpdateReport"
-          - "codebuild:BatchPutTestCases"
-          - "codebuild:BatchPutCodeCoverages"
-          Effect: "Allow"
-      # Removed Roles section and DependsOn - attachment handled by role's ManagedPolicyArns
+          - Resource:
+              - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd"
+              - "arn:aws:logs:us-east-1:296062576962:log-group:/aws/codebuild/nextwork-devops-cicd:*"
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Effect: "Allow"
+          - Resource:
+              - "arn:aws:s3:::codepipeline-us-east-1-*"
+            Action:
+              - "s3:PutObject"
+              - "s3:GetObject"
+              - "s3:GetObjectVersion"
+              - "s3:GetBucketAcl"
+              - "s3:GetBucketLocation"
+            Effect: "Allow"
+          - Resource:
+              - "arn:aws:s3:::nextwork-devops-cicd-sahithi-aekka"
+              - "arn:aws:s3:::nextwork-devops-cicd-sahithi-aekka/*"
+            Action:
+              - "s3:PutObject"
+              - "s3:GetBucketAcl"
+              - "s3:GetBucketLocation"
+            Effect: "Allow"
+          - Resource:
+              - "arn:aws:codebuild:us-east-1:296062576962:report-group/nextwork-devops-cicd-*"
+            Action:
+              - "codebuild:CreateReportGroup"
+              - "codebuild:CreateReport"
+              - "codebuild:UpdateReport"
+              - "codebuild:BatchPutTestCases"
+              - "codebuild:BatchPutCodeCoverages"
+            Effect: "Allow"
       Users: []
+
   IAMManagedPolicyPolicycodeartifactnextworkconsumerpolicy:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::ManagedPolicy"
@@ -259,20 +247,20 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Resource: "*"
-          Action:
-          - "codeartifact:GetAuthorizationToken"
-          - "codeartifact:GetRepositoryEndpoint"
-          - "codeartifact:ReadFromRepository"
-          Effect: "Allow"
-        - Condition:
-            StringEquals:
-              sts:AWSServiceName: "codeartifact.amazonaws.com"
-          Resource: "*"
-          Action: "sts:GetServiceBearerToken"
-          Effect: "Allow"
-      # Removed Roles section - attachment handled by roles' ManagedPolicyArns
+          - Resource: "*"
+            Action:
+              - "codeartifact:GetAuthorizationToken"
+              - "codeartifact:GetRepositoryEndpoint"
+              - "codeartifact:ReadFromRepository"
+            Effect: "Allow"
+          - Condition:
+              StringEquals:
+                sts:AWSServiceName: "codeartifact.amazonaws.com"
+            Resource: "*"
+            Action: "sts:GetServiceBearerToken"
+            Effect: "Allow"
       Users: []
+
   EC2VPC:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::EC2::VPC"
@@ -283,16 +271,7 @@ Resources:
       InstanceTenancy: "default"
       EnableDnsHostnames: true
       Tags: []
-  EC2VolumeAttachment:
-    UpdateReplacePolicy: "Delete"
-    Type: "AWS::EC2::VolumeAttachment"
-    DeletionPolicy: "Delete"
-    Properties:
-      InstanceId: 
-        Ref: "EC2Instance"
-      VolumeId: 
-        Ref: "EC2Volume"
-      Device: "/dev/xvda"
+
   IAMRoleNextWorkCodeDeployRole:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::Role"
@@ -300,18 +279,18 @@ Resources:
     Properties:
       Path: "/"
       ManagedPolicyArns:
-      - "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+        - "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
       MaxSessionDuration: 3600
       RoleName: "NextWorkCodeDeployRole"
       Description: "Allows CodeDeploy to call AWS services such as Auto Scaling on your behalf.\nCreated as a part of NextWork's Cl/CD Pipeline series.\n"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Action: "sts:AssumeRole"
-          Effect: "Allow"
-          Principal:
-            Service: "codedeploy.amazonaws.com"
-          Sid: ""
+          - Action: "sts:AssumeRole"
+            Effect: "Allow"
+            Principal:
+              Service: "codedeploy.amazonaws.com"
+            Sid: ""
 
   IAMInstanceProfileCodeartifactnextworkconsumerpolicy:
     UpdateReplacePolicy: "Delete"
@@ -320,9 +299,9 @@ Resources:
     Properties:
       Path: "/"
       Roles:
-      - Ref: "IAMRoleCodeartifactnextworkconsumerpolicy"
-      InstanceProfileName:
-        Ref: "IAMRoleCodeartifactnextworkconsumerpolicy"
+        - Ref: "IAMRoleCodeartifactnextworkconsumerpolicy"
+      InstanceProfileName: !Ref IAMRoleCodeartifactnextworkconsumerpolicy
+
   IAMRoleCodebuildnextworkdevopscicdservicerole:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::Role"
@@ -330,19 +309,20 @@ Resources:
     Properties:
       Path: "/service-role/"
       ManagedPolicyArns:
-      - Ref: "IAMManagedPolicyPolicyserviceroleCodeBuildCloudWatchLogsPolicynextworkdevopscicduseast1"
-      - Ref: "IAMManagedPolicyPolicyserviceroleCodeBuildCodeConnectionsSourceCredentialsPolicynextworkdevopscicduseast1296062576962"
-      - Ref: "IAMManagedPolicyPolicycodeartifactnextworkconsumerpolicy"
-      - Ref: "IAMManagedPolicyPolicyserviceroleCodeBuildBasePolicynextworkdevopscicduseast1"
+        - Ref: "IAMManagedPolicyPolicyserviceroleCodeBuildCloudWatchLogsPolicynextworkdevopscicduseast1"
+        - Ref: "IAMManagedPolicyPolicyserviceroleCodeBuildCodeConnectionsSourceCredentialsPolicynextworkdevopscicduseast1296062576962"
+        - Ref: "IAMManagedPolicyPolicycodeartifactnextworkconsumerpolicy"
+        - Ref: "IAMManagedPolicyPolicyserviceroleCodeBuildBasePolicynextworkdevopscicduseast1"
       MaxSessionDuration: 3600
       RoleName: "codebuild-nextwork-devops-cicd-service-role"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Action: "sts:AssumeRole"
-          Effect: "Allow"
-          Principal:
-            Service: "codebuild.amazonaws.com"
+          - Action: "sts:AssumeRole"
+            Effect: "Allow"
+            Principal:
+              Service: "codebuild.amazonaws.com"
+
   CodeStarConnectionsConnectionConnection84ea5fc63790467db8ceb66a46e11253:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::CodeStarConnections::Connection"
@@ -351,6 +331,7 @@ Resources:
       ConnectionName: "nextwork-devops-cicd"
       ProviderType: "GitHub"
       Tags: []
+
   CodeArtifactRepositoryRepositorynextworkpypistore:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::CodeArtifact::Repository"
@@ -359,11 +340,12 @@ Resources:
       RepositoryName: "pypi-store"
       Description: "Provides PyPI artifacts from PyPI."
       ExternalConnections:
-      - "public:pypi"
+        - "public:pypi"
       DomainName:
         Fn::GetAtt:
-        - "CodeArtifactDomainDomainnextwork"
-        - "Name"
+          - "CodeArtifactDomainDomainnextwork"
+          - "Name"
+
   S3BucketNextworkdevopscicdsahithiaekka:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::S3::Bucket"
@@ -377,9 +359,9 @@ Resources:
       BucketName: "nextwork-devops-cicd-sahithi-aekka"
       OwnershipControls:
         Rules:
-        - ObjectOwnership: "BucketOwnerEnforced"
+          - ObjectOwnership: "BucketOwnerEnforced"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
-        - BucketKeyEnabled: true
-          ServerSideEncryptionByDefault:
-            SSEAlgorithm: "AES256"
+          - BucketKeyEnabled: true
+            ServerSideEncryptionByDefault:
+              SSEAlgorithm: "AES256"
