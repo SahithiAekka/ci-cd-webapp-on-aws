@@ -187,7 +187,7 @@ Resources:
       ApplicationName: "nextwork-devops-cicd"
       ComputePlatform: "Server"
   
-  CodeBuilddProjectNextworkdevopscicd:
+  CodeBuildProjectNextworkdevopscicd:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::CodeBuild::Project"
     DeletionPolicy: "Delete"
@@ -196,7 +196,7 @@ Resources:
       Description: "CodeBuild project for Nextwork Devops CI/CD"
       ServiceRole: !GetAtt IAMRoleCodebuildnextworkdevopscicdservicerole.Arn
       Source:
-        Type: "CODECOMMIT"
+        Type: "GITHUB"
         Location: "https://github.com/SahithiAekka/ci-cd-webapp-on-aws"
         BuildSpec: "buildspec.yml"
         GitCloneDepth: 1
@@ -209,12 +209,24 @@ Resources:
         Type: "LINUX_CONTAINER"
         ComputeType: "BUILD_GENERAL1_SMALL"
         Image: "aws/codebuild/standard:6.0"
-      LogsConfig:
-        CloudWatchLogs:
-          Status: "ENABLED"
-          GroupName: "/aws/codebuild/nextwork-devops-cicd"
-        TimeoutInMinutes: 60
+      Tags: []
 
+  CodeDeployDeploymentGroupNextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CodeDeploy::DeploymentGroup"
+    DeletionPolicy: "Delete"
+    Properties:
+      ApplicationName: !Ref CodeDeployApplicationNextworkdevopscicd
+      DeploymentGroupName: "nextwork-devops-cicd-deployment-group"
+      ServiceRoleArn: !GetAtt IAMRoleNextWorkCodeDeployRole.Arn
+      DeploymentConfigName: CodeDeployDefault.AllAtOnce
+      Ec2TagFilters:
+        - Type: "KEY_AND_VALUE"
+          Key: "role"
+          Value: "webserver"
+      AutoScalingGroups: []
+
+      
   IAMManagedPolicyPolicyserviceroleCodeBuildBasePolicynextworkdevopscicduseast1:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::IAM::ManagedPolicy"
