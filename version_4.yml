@@ -186,6 +186,34 @@ Resources:
     Properties:
       ApplicationName: "nextwork-devops-cicd"
       ComputePlatform: "Server"
+  
+  CodeBuilddProjectNextworkdevopscicd:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::CodeBuild::Project"
+    DeletionPolicy: "Delete"
+    Properties:
+      Name: "nextwork-devops-cicd"
+      Description: "CodeBuild project for Nextwork Devops CI/CD"
+      ServiceRole: !GetAtt IAMRoleCodebuildnextworkdevopscicdservicerole.Arn
+      Source:
+        Type: "CODECOMMIT"
+        Location: "https://github.com/SahithiAekka/ci-cd-webapp-on-aws"
+        BuildSpec: "buildspec.yml"
+        GitCloneDepth: 1
+      Artifacts:
+        Type: "S3"
+        Location: !Ref S3BucketNextworkdevopscicdsahithiaekka
+        Name: "nextwork-devops-cicd-sahithi-aekka"
+        Packaging: "ZIP"
+      Environment:
+        Type: "LINUX_CONTAINER"
+        ComputeType: "BUILD_GENERAL1_SMALL"
+        Image: "aws/codebuild/standard:6.0"
+      LogsConfig:
+        CloudWatchLogs:
+          Status: "ENABLED"
+          GroupName: "/aws/codebuild/nextwork-devops-cicd"
+        TimeoutInMinutes: 60
 
   IAMManagedPolicyPolicyserviceroleCodeBuildBasePolicynextworkdevopscicduseast1:
     UpdateReplacePolicy: "Delete"
