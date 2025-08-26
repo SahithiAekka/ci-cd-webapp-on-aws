@@ -43,6 +43,8 @@ Resources:
       Tags:
         - Key: "Name"
           Value: "nextwork-devops-sahithi-aekka"
+        - Key: "role"
+          Value: "webserver"
       CreditSpecification:
         CPUCredits: "standard"
 
@@ -119,10 +121,10 @@ Resources:
       GroupName: "launch-wizard-1"
       VpcId: !Ref EC2VPC
       SecurityGroupIngress:
-        - CidrIp: "216.103.144.19/32"
+        - CidrIp: "0.0.0.0/0"
           IpProtocol: "tcp"
-          FromPort: 22
-          ToPort: 22
+          FromPort: 5000
+          ToPort: 5000
       SecurityGroupEgress:
         - CidrIp: "0.0.0.0/0"
           IpProtocol: "-1"

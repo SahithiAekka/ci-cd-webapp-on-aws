@@ -22,4 +22,3 @@ pip install -r requirements.txt
 # Optional: Run the Flask app (debug only)
 # flask run --host=0.0.0.0 --port=5000
 
-EOF

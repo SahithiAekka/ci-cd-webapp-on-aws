@@ -1,0 +1,62 @@
+
+Day 1 : 
+-> CI/CD -- Continous Integration and Continous Development 
+    a tool that automates the steps from development to deployment. 
+    helps team engineering team build and release software much faster
+
+-> Create IAM user - best practise for account security 
+
+-> Launch a new EC2 instance.
+
+-> Set up a key pai for a secure access 
+
+-> Set up network settings for your instance 
+
+What is SSH?
+SSH i.e. Secure Shell is a protocol used to make sure only authorized users can access a remote server. When you connect to your EC2 instance later in this project, SSH verifies you have the correct private key that matches the public key on the server.
+SSH is also a type of network traffic.
+ Once SSH has authorized you, it'll set up a secure connection between you and the EC2 instance. 
+ All data transferred (including your commands and the responses from the instance) gets encrypted. 
+ This encryption makes SSH an ideal method for working with virtual servers!
+
+
+-> What is a terminal?
+A terminal is where you send instructions to your computer using text instead of clicks
+
+
+We're navigating the terminal so that it can get into the DevOps folder that's storing your .pem file, so we can run commands to connect to your instance next.
+ accessing the .pem file 
+icacls "devops_prac_keypair.pem" /reset
+icacls "devops_prac_keypair.pem" /grant:r "sahithi\18102:R"
+icacls "devops_prac_keypair.pem" /inheritance:r 
+
+icals-- Integrity Control Access Control Lists  
+     - tool for windows to decide who can open and change files on system 
+
+
+now let's connect to EC2 instance 
+
+my instance public ipv4 dns -- ec2-3-143-242-208.us-east-2.compute.amazonaws.com
+path to .pem file -- C:\Users\18102\Desktop\ci-cd-webapp-on-aws\devops\devops_prac_keypair.pem
+
+** connect instance via SSH: 
+ssh -i C:\Users\18102\Desktop\ci-cd-webapp-on-aws\devops\devops_prac_keypair.pem ec2-user@ ec2-3-143-242-208.us-east-2.compute.amazonaws.com
+
+The authenticity of host 'ec2-3-143-242-208.us-east-2.compute.amazonaws.com (3.143.242.208)' can't be established.
+ED25519 key fingerprint is SHA256:oZdaP5joj2PZlHRTN27YPqaa5U6H3SbeU1v2biAwt5U.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'ec2-3-143-242-208.us-east-2.compute.amazonaws.com' (ED25519) to the list of known hosts.
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+[ec2-user@ip-172-31-18-66 ~]$ 
+
+Public IPv4 - public address for your EC2 server that the internet uses to find and connect it.
