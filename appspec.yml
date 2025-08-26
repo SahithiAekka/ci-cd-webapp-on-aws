@@ -5,6 +5,13 @@ files:
   - source: flask-app/
     destination: /home/ec2-user/flask-app
 
+permissions:
+  - object: /home/ec2-user/flask-app/scripts/
+    pattern: "*.sh"
+    mode: 755
+    type:
+      - file
+
 hooks:
   ApplicationStop:
     - location: scripts/stop_server.sh

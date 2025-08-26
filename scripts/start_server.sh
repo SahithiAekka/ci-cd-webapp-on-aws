@@ -1,11 +1,8 @@
 #!/bin/bash
 
 # Navigate to app directory
-cd /home/ec2-user/flask-app  # adjust if your path is different
+cd /home/ec2-user/flask-app
 
-# Activate virtual environment (if used)
-source venv/bin/activate
-
-# Start Flask app using Gunicorn (adjust app.py if needed)
-# Assumes your Flask app is named `app` inside `app.py`
-gunicorn --bind 0.0.0.0:5000 app:app --daemon
+# Start Flask app using Gunicorn
+# Dependencies installed in current directory by CodeBuild
+PYTHONPATH=/home/ec2-user/flask-app python3 -m gunicorn --bind 0.0.0.0:5000 app:app --daemon
