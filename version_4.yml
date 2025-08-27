@@ -228,6 +228,12 @@ Resources:
             Resource:
               - !Sub "${S3BucketNextworkdevopscicdsahithiaekka.Arn}/*"
               - !GetAtt S3BucketNextworkdevopscicdsahithiaekka.Arn
+          - Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+              - "s3:GetObjectVersion"
+            Resource:
+              - "arn:aws:s3:::codepipeline-us-east-1-*"
 
   IAMManagedPolicyPolicyserviceroleCodeBuildCloudWatchLogsPolicynextworkdevopscicduseast1:
     UpdateReplacePolicy: "Delete"
