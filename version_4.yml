@@ -50,38 +50,14 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          set -e  # Exit on any error
-          exec > >(tee /var/log/user-data.log)  # Log everything
-          exec 2>&1
-          
-          echo "Starting UserData script..."
-          
-          # Update system
           yum update -y
-          
-          # Install required packages
-          yum install -y ruby wget python3 python3-pip
-          
-          # Install SSM agent (for Session Manager)
-          yum install -y amazon-ssm-agent
-          systemctl enable amazon-ssm-agent
-          systemctl start amazon-ssm-agent
-          
-          # Install CodeDeploy agent
+          yum install -y ruby wget
           cd /home/ec2-user
           wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
           chmod +x ./install
           ./install auto
-          
-          # Start and enable CodeDeploy agent
-          systemctl enable codedeploy-agent
           systemctl start codedeploy-agent
-          
-          # Verify services are running
-          systemctl is-active codedeploy-agent || { echo "CodeDeploy agent failed"; exit 1; }
-          systemctl is-active amazon-ssm-agent || { echo "SSM agent failed"; exit 1; }
-          
-          echo "UserData script completed successfully"
+          systemctl enable codedeploy-agent
 
   CodeArtifactRepositoryRepositorynextworknextworkdevopscicd:
     UpdateReplacePolicy: "Delete"
@@ -178,6 +154,7 @@ Resources:
       Path: "/"
       ManagedPolicyArns:
         - Ref: "IAMManagedPolicyPolicycodeartifactnextworkconsumerpolicy"
+        - !Ref EC2CodeDeployPolicy
       MaxSessionDuration: 3600
       RoleName: "codeartifact-nextwork-consumer-policy"
       Description: "IAM role for EC2 instances to access CodeArtifact"
@@ -188,6 +165,31 @@ Resources:
             Effect: "Allow"
             Principal:
               Service: "ec2.amazonaws.com"
+
+  EC2CodeDeployPolicy:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Delete"
+    Properties:
+      ManagedPolicyName: "EC2CodeDeployAccessPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+              - "logs:DescribeLogStreams"
+              - "logs:DescribeLogGroups"
+            Resource: "*"
+          - Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+              - "s3:ListBucket"
+            Resource:
+              - !Sub "${S3BucketNextworkdevopscicdsahithiaekka.Arn}/*"
+              - !GetAtt S3BucketNextworkdevopscicdsahithiaekka.Arn
 
   IAMManagedPolicyPolicyserviceroleCodeBuildCloudWatchLogsPolicynextworkdevopscicduseast1:
     UpdateReplacePolicy: "Delete"
@@ -249,7 +251,7 @@ Resources:
       Environment:
         Type: "LINUX_CONTAINER"
         ComputeType: "BUILD_GENERAL1_SMALL"
-        Image: "aws/codebuild/standard:6.0"
+        Image: "aws/codebuild/standard:7.0"
       Tags: []
 
   CodeDeployDeploymentGroupNextworkdevopscicd:

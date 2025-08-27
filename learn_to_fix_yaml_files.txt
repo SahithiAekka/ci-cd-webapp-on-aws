@@ -1,0 +1,42 @@
+1. AWS EC2 UserData Documentation:
+  - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
+  -
+  https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
+
+  2. SSM Agent Installation:
+  - https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-install-s     
+  sm-agent.html
+  - Amazon Linux 2023 comes with SSM pre-installed, but needs IAM role
+
+  3. CloudFormation UserData Examples:
+  - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties     
+  -ec2-instance.html
+  - https://github.com/awslabs/aws-cloudformation-templates
+
+  How to identify issues next time:
+
+  1. Always check UserData logs:
+  # These files tell you what failed during boot:
+  /var/log/cloud-init.log
+  /var/log/cloud-init-output.log
+  /var/log/messages
+
+  2. Test UserData locally first:
+  # Run your script manually on a test EC2 to verify it works
+
+  3. Error handling in UserData (bash, not YAML):
+  UserData:
+    Fn::Base64: !Sub |
+      #!/bin/bash
+      set -e  # Exit on any error
+      exec > >(tee /var/log/user-data.log)  # Log everything
+      exec 2>&1
+
+      yum update -y || { echo "yum update failed"; exit 1; }
+      yum install -y ruby wget || { echo "package install failed"; exit 1; }
+
+  4. CloudWatch for UserData debugging:
+  - https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/QuickStartEC2Instanc     
+  e.html
+
+  YAML doesn't do error handling - the bash script inside UserData does.
