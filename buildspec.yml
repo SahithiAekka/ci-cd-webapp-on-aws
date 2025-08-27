@@ -16,7 +16,6 @@ phases:
     commands:
       - echo "Building deployment package - Zipping the Flask app"
       # The key step: Create a zip of the entire flask-app directory, including its newly installed dependencies
-      - cd flask-app && zip -r ../app.zip . && cd ..
 
   post_build:
     commands:
@@ -27,4 +26,4 @@ artifacts:
     - flask-app/**/*
     - appspec.yml
     - scripts/**/*
-  discard-paths: no
+  discard-paths: yes
