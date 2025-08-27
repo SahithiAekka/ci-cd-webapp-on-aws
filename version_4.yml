@@ -124,6 +124,43 @@ Resources:
       Ipv6Native: false
       Tags: []
 
+  EC2InternetGateway:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::InternetGateway"
+    DeletionPolicy: "Delete"
+    
+  EC2VPCGatewayAttachment:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: !Ref EC2VPC
+      InternetGatewayId: !Ref EC2InternetGateway
+
+  EC2RouteTable:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::RouteTable"
+    DeletionPolicy: "Delete"
+    Properties:
+      VpcId: !Ref EC2VPC
+
+  EC2Route:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::Route"
+    DeletionPolicy: "Delete"
+    Properties:
+      RouteTableId: !Ref EC2RouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref EC2InternetGateway
+
+  EC2SubnetRouteTableAssociation:
+    UpdateReplacePolicy: "Delete"
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    DeletionPolicy: "Delete"
+    Properties:
+      SubnetId: !Ref EC2Subnet
+      RouteTableId: !Ref EC2RouteTable
+
   EC2SecurityGroup:
     UpdateReplacePolicy: "Delete"
     Type: "AWS::EC2::SecurityGroup"
