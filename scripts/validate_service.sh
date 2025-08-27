@@ -1,3 +1,3 @@
 #!/bin/bash
-sleep 10
+sleep 20
 curl -f http://localhost:5000/ || exit 1
