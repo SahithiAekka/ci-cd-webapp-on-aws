@@ -26,4 +26,4 @@ artifacts:
     - flask-app/**/*
     - appspec.yml
     - scripts/**/*
-  discard-paths: yes
+  discard-paths: no
