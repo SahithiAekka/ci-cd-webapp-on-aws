@@ -39,6 +39,7 @@ Resources:
       PlacementGroupName: ""
       ImageId: "ami-00ca32bbc84273381"
       InstanceType: "t2.micro"
+      KeyName: !Ref KeyName
       Monitoring: false
       Tags:
         - Key: "Name"
