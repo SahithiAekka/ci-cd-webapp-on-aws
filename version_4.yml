@@ -233,7 +233,7 @@ Resources:
               - "s3:GetObject"
               - "s3:GetObjectVersion"
             Resource:
-              - "arn:aws:s3:::codepipeline-us-east-1-*"
+              - "arn:aws:s3:::codepipeline-us-east-1-*/*"
 
   IAMManagedPolicyPolicyserviceroleCodeBuildCloudWatchLogsPolicynextworkdevopscicduseast1:
     UpdateReplacePolicy: "Delete"
