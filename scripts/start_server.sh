@@ -3,6 +3,10 @@
 # Navigate to app directory
 cd /home/ec2-user/flask-app
 
-# Start Flask app using Gunicorn
-# Dependencies installed in current directory by CodeBuild
-PYTHONPATH=/home/ec2-user/flask-app python3 -m gunicorn --bind 0.0.0.0:5000 app:app --daemon
+# Stop any existing processes
+sudo pkill -f "python3.*app.py" || true
+
+# Start Flask app directly
+python3 app.py > /var/log/flask-app.log 2>&1 &
+
+echo "Flask app started on port 5000"
