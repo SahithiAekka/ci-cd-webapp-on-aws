@@ -21,8 +21,7 @@ phases:
 
 artifacts:
   files:
-    - target/nextwork-web-project.war
+    - flask-app/**/* 
     - appspec.yml
     - scripts/**/*
   discard-paths: no
-
