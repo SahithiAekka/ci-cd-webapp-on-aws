@@ -5,25 +5,24 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
-      - echo "Installing dependencies..."
+      - echo Installing dependencies...
       - export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain nextwork --domain-owner 296062576962 --region us-east-1 --query authorizationToken --output text`
-      - pip config set global.index-url "https://aws:${CODEARTIFACT_AUTH_TOKEN}@nextwork-296062576962.d.codeartifact.us-east-1.amazonaws.com/pypi/nextwork-devops-cicd/simple/"
+      - pip config set global.index-url https://aws:$CODEARTIFACT_AUTH_TOKEN@nextwork-296062576962.d.codeartifact.us-east-1.amazonaws.com/pypi/nextwork-devops-cicd/simple/
       - pip install --upgrade pip
-      # It's crucial to install dependencies into the flask-app directory
-      - pip install -r flask-app/requirements.txt -t flask-app/
+      - pip install -r flask-app/requirements.txt
 
   build:
     commands:
-      - echo "Building deployment package - Zipping the Flask app"
-      # The key step: Create a zip of the entire flask-app directory, including its newly installed dependencies
+      - echo Build phase — nothing to build for Flask
 
   post_build:
     commands:
-      - echo "Build completed. The app.zip artifact is ready for CodeDeploy."
+      - echo Build completed
 
 artifacts:
   files:
-    - flask-app/**/*
+    - target/nextwork-web-project.war
     - appspec.yml
     - scripts/**/*
   discard-paths: no
+

@@ -5,14 +5,14 @@
     <title>My CI/CD Project 🚀</title>
     <style>
         body {
-            font-family: 'Comic Sans MS', cursive;
-            background-color: #fdf6e3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
             color: #333;
             padding: 40px;
             text-align: center;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
         }
         h1 {
@@ -21,30 +21,62 @@
         p {
             font-size: 18px;
         }
-        .heart {
-            font-size: 48px;
-            color: #ff69b4;
-            animation: beat 1s infinite alternate;
+        ul {
+            text-align: left;
+            display: inline-block;
+            font-size: 16px;
         }
-        @keyframes beat {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
+        img {
+            margin-top: 30px;
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #555;
+        }
+        footer a {
+            color: #a51111;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="cloud">☁️</div>
-        <h1>Hello from my Library App!</h1>
-        <p>This project is a mini CI/CD pipeline hosted on AWS using:</p>
-        <ul style="text-align:left;">
-            <li>✅ CodeCommit for source control</li>
-            <li>✅ CodeBuild for automated builds</li>
+        <h1>Hello from my CI/CD Demo Project 🚀</h1>
+        <p>This project demonstrates a complete CI/CD pipeline hosted on AWS. It demonstrates how code flows from a GitHub commit all the way to a running application on EC2.</p>
+        <h2>🔧 Services Used</h2>
+        <ul>
+            <li>✅ GitHub for source control</li>
+            <li>✅ CodePipeline to orchestrate CI/CD</li>
+            <li>✅ CodeBuild for automated builds and tests</li>
+            <li>✅ S3 bucket for storing build artifacts</li>
             <li>✅ CodeDeploy for deployment</li>
-            <li>✅ EC2 instance running this Flask app</li>
+            <li>✅ CloudFormation for infrastructure as code</li>
+            <li>✅ EC2 instance hosting this Flask app</li>
+            <li>✅ IAM for secure access management</li>
         </ul>
+        <h2>📊 Architecture Diagram</h2>
+        <div class="diagram">
+            <img src="images/architecture-complete.png" alt="CI/CD Architecture Diagram">
+        </div>
+
         <p>It all works together to continuously deliver code, beautifully and simply. ✨</p>
         <div class="cloud">☁️</div>
-    </div>
+    <footer>
+        <p>👩‍💻 Built by <strong>Sahithi Aekka</strong> </p>
+        <p>
+            <a href="https://github.com/SahithiAekka" target="_blank">GitHub</a> |
+            <a href="https://www.linkedin.com/in/sahithiaekka/" target="_blank">LinkedIn</a>
+        </p>
+    </footer>
 </body>
 </html>
+
+
